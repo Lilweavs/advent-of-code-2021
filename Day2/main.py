@@ -1,26 +1,27 @@
 def part1(data):
     x = h = 0
     for cmd, val in data:
+        val = int(val)
         if 'f' in cmd:
-            x += int(val)
+            x += val
         elif 'u' in cmd:
-            h -= int(val)
+            h -= val
         else:
-            h += int(val)
+            h += val
 
     print(x*h)
 
 def part2(data):
     x = h = aim = 0
     for cmd, val in data:
+        val = int(val)
         if 'f' in cmd:
-            tmp = int(val)
-            x += tmp
-            h += tmp*aim
+            x += val
+            h += val*aim
         elif 'u' in cmd:
-            aim -= int(val)
+            aim -= val
         else:
-            aim += int(val)
+            aim += val
 
     print(x*h)
 
