@@ -1,10 +1,8 @@
-from typing import ParamSpec
-
+from math import floor, ceil
 
 class Tree:
 
     def __init__(self, parent=None, data=None, depth=0) -> None:
-        # self.data   = data
         self.parent = parent
         self.depth  = depth
         self.left   = None
@@ -31,52 +29,58 @@ class Tree:
         else:
             self.right = data[1]
 
-    def insertLeft(self):
-        pass
-        # if isinstance(self.data, int):
-            # return
-
-        # if isinstance(self.data, int):
-        #     return
-        # elif isinstance(self.data[0], int) and isinstance(self.data[1], int):
-        #     self.left = self.data
-        # else:
-        #     self.left = Tree(self, self.data[0], self.depth+1)
-        #     self.left.buildChildren()
-        # self.right = Tree(self, self.data[1], self.depth+1)
-        # self.right.buildChildren()
-
-        # self.left = self.insertLeft(parent[0])
-        # self.right = self.insertRight(parent[1])
-
-    # def findLeftReg(self, left):
-    #     if 
-    #     self.parent(findLeftReg)
-    #     return 0
-
-    def explodeLeft(self):
-        self.left = None
-        return 0
-
-    def findExplode(self, depth):
+    def findSplit(self, depth):
 
         if isinstance(self.left, Tree):
-            found, left, right = self.left.findExplode(depth+1)
+            tmp = self.left.findSplit(depth+1)
+            if tmp:
+                return True
+        else:
+            if isinstance(self.left, int):
+                if self.left > 9:
+                    self.left = Tree(self, [floor(self.left/2), ceil(self.left/2)], depth+1)
+                    return True
+            if isinstance(self.right, int):
+                if self.right > 9:
+                    self.right = Tree(self, [floor(self.right/2), ceil(self.right/2)], depth+1)
+                    return True
+
+        if isinstance(self.right, Tree):
+            tmp = self.right.findSplit(depth+1)
+            if tmp:
+                return True
+        else:
+            if isinstance(self.left, int):
+                if self.left > 9:
+                    self.left = Tree(self, [floor(self.left/2), ceil(self.left/2)], depth+1)
+                    return True
+            if isinstance(self.right, int):
+                if self.right > 9:
+                    self.right = Tree(self, [floor(self.right/2), ceil(self.right/2)], depth+1)
+                    return True
+
+        return False
+
+    def findExplode(self, depth, tmp):
+        if isinstance(self.left, Tree):
+            found, left, right, tmp = self.left.findExplode(depth+1, tmp)
             if found:
+                tmp = True
                 self.left = 0
                 
                 self.searchUpLeft(left)
                 if isinstance(self.right, int):
                     self.right += right
                 else:
-                    pass
+                    self.right.searchDownLeft(right)
         else:
             if depth > 3:
-                return True, self.left, self.right
+                return True, self.left, self.right, tmp
 
         if isinstance(self.right, Tree):
-            found, left, right = self.right.findExplode(depth+1)
+            found, left, right, tmp = self.right.findExplode(depth+1, tmp)
             if found:
+                tmp = True
                 self.right = 0
                 # if isinstance(self.right, int):
                 #     self.parent.right += right
@@ -84,46 +88,20 @@ class Tree:
                 self.searchUpRight(right)
                 if isinstance(self.left, int):
                     self.left += left
+                elif isinstance(self.left, Tree):
+                    self.left.searchDownRight(left)
         else:
             if depth > 3:
-                return True, self.left, self.right
+                return True, self.left, self.right, tmp
             
-        return False, 0, 0
-                # print(self.left, self.right)
-
-        # if not isinstance(self.left, int) and not isinstance(self.right, int):
-        #     found = self.left.findExplode()
-        # else:
-
-
-        if not isinstance(self.left, list):
-            found = self.left.findExplode()
-            if found:
-                self.parent.searchLeft(self.left[0], self.left[1])
-        else:
-            if self.depth > 2:
-                return True
-
-                # print(self.data)
-            else:
-                self.left.findExplode()
-
-
-        # if self.left:
-        #     self.left.findPair()
-        # else:
-        #     if self.depth > 3:
-        #         print(self.data)
-
-        return 0
+        return False, 0, 0, tmp
 
     def searchDownLeft(self, right):
         if isinstance(self.left, Tree):
             self.left.searchDownLeft(right)
         else:
-            if isinstance(self.left, int) and not isinstance(self.right, int):
+            if isinstance(self.left, int):
                 self.left += right
-
 
         return
 
@@ -138,12 +116,6 @@ class Tree:
             else:
                 self.parent.right.searchDownLeft(right)
 
-        # elif self.parent.parent == None:
-        #     if isinstance(self.parent.)
-        # else:
-        #     if isinstance(self.right.left, int):
-        #         print(self.left + right)
-
     def searchUpLeft(self, left):
         if self.parent == None:
             return
@@ -155,80 +127,67 @@ class Tree:
             else:
                 self.parent.left.searchDownRight(left)
 
-    def downSearchRight(self, left):
+    def searchDownRight(self, left):
         if isinstance(self.right, Tree):
-            self.left.searchDownRight(left)
+            self.right.searchDownRight(left)
         else:
-            if self.left == None:
+            if isinstance(self.right, int):
                 self.right += left
 
-    def topDownSearch():
-        return 0
+    def magnitude(self):
+        
+        if isinstance(self.left, Tree):
+            leftMag = self.left.magnitude()
+        else:
+            leftMag = self.left
+        if isinstance(self.right, Tree):
+            rightMag = self.right.magnitude()
+        else:
+            rightMag = self.right
 
-    # def insertRight(self, child):
-    #     if isinstance(child, int):
-    #         self.right = child
-    #         return child
-    #     else: 
-    #         self.buildChildren(child)
-    #         return Tree(child, self.depth+1)
-    #     # self.right = Tree(child, self.depth+1)
+        return 3*leftMag + 2*rightMag
 
-    # def insertLeft(self, child):
-    #     if isinstance(child, int):
-    #         self.left = child
-    #         return child
-    #     else:
-    #         tree = Tree(child, self.depth+1)
-    #         tree.buildChildren()
-    #         return tree
-    #     # self.left = Tree(child, self.depth+1)
+    def simplify(self):
+        tmp = True
+        while tmp:
+            _, _, _, tmp = self.findExplode(0, False)
+            tmp = self.findSplit(0)   
+
 
 def part1(data):
 
+    tree = Tree(None, data.pop(0))
 
-    newList = [data[0], data[1]]
+    for addition in data:
+        tmpTree = Tree()
+        tmpTree.left = tree
+        tmpTree.left.parent = tmpTree
+        tmpTree.right = Tree(tmpTree, addition)
 
-    newList = [[[[4,3],4],4],[7,[[8,4],9]]]
+        tree = tmpTree
 
-    addition = [1, 1]
+        tree.simplify()
 
-    tree = Tree(None, newList)
-    
-    tmp = Tree()
-    tmp.left = tree
-    tmp.left.parent = tmp
-    tmp.right = Tree(tmp, addition)
-
-    tree = tmp
-
-    tree.findExplode(0)
-
-    return 0
-
-def checkExplode(parentList: list, depth):
-
-    for subList in parentList:
-        if depth > 2 and isinstance(subList, list) and len(subList) == 2:
-            left, right = subList
-            parentList.remove(subList)
-            return True, left, right, depth
-        if isinstance(subList, list):
-            checkExplode(subList, depth+1)
-
-    return None
+    return tree.magnitude()
 
 def part2(data):
 
+    m = 0
+    for leftFish in data:
+        for rightFish in data:
+            
+            tree = Tree(None, [leftFish, rightFish])
+            tree.simplify()
+            m = max(m, tree.magnitude())
 
-    return 0
+    return m
 
 if __name__ == '__main__':
 
     data = []
     with open('input.txt', 'r') as file:
         for line in file:
-            print(line)
             data.append(eval(line.strip()))
 
-    print(part1(data))
+    print(f'Part 1: {part1(data)}')
+    print(f'Part 2: {part2(data)}')
